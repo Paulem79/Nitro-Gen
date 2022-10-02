@@ -4,7 +4,7 @@ from discord_webhook import DiscordWebhook
 from zipfile import ZipFile
 from bs4 import BeautifulSoup
 
-PING_ME = False
+THIS_VERSION = "1.0"
 
 git = "https://github.com/Paulem79/Nitro-Gen"
 progname = "Nitro Gen"
