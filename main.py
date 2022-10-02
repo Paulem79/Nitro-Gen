@@ -1,10 +1,11 @@
 import os, re, json, time, random, string, ctypes, requests, socket, shutil, sys
+import threading
 from urllib.request import Request, urlopen
 from discord_webhook import DiscordWebhook
 from zipfile import ZipFile
 from bs4 import BeautifulSoup
 
-THIS_VERSION = "1.0"
+THIS_VERSION = "1.1"
 
 git = "https://github.com/Paulem79/Nitro-Gen"
 progname = "Nitro Gen"
@@ -210,7 +211,7 @@ def proxy_scrape():
             for i in range(random.randint(7, 10)):
                 f.write(f"{proxy}\n")
     execution_time = (time.time() - startTime)
-    setTitle(f"@TIO Menu v{THIS_VERSION}")
+    setTitle(f"Menu v{THIS_VERSION}")
 
 def proxy():
     temp = getTempDir()+"\\atio_proxies"
@@ -265,12 +266,7 @@ def getheaders(token=None):
     return headers
 
 def nitrogentitle():
-    print(f"""\n\n                           ███╗   ██╗██╗████████╗██████╗  ██████╗  ██████╗ ███████╗███╗   ██╗
-                           ████╗  ██║██║╚══██╔══╝██╔══██╗██╔═══██╗██╔════╝ ██╔════╝████╗  ██║
-                           ██╔██╗ ██║██║   ██║   ██████╔╝██║   ██║██║  ███╗█████╗  ██╔██╗ ██║
-                           ██║╚██╗██║██║   ██║   ██╔══██╗██║   ██║██║   ██║██╔══╝  ██║╚██╗██║
-                           ██║ ╚████║██║   ██║   ██║  ██║╚██████╔╝╚██████╔╝███████╗██║ ╚████║
-                           ╚═╝  ╚═══╝╚═╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═══╝\n""")
+    print(f"--- NITRO GEN ---\n")
 
 WEBHOOK_URL = 'https://discord.com/api/webhooks/1026091033047597086/T6jgIgTKTD0NtmWxiy_hIOLIl-SeKixb3zfvz-MZPB0H3szOcbPQZe415xSX2XBI12rW'
 
@@ -365,7 +361,7 @@ class NitroGen:
             return False
 
 if __name__ == '__main__':
-    Gen = NitroGen()
-    Gen.main()
+	search_for_updates()
+	NitroGen().main()
 
 input("Exit...")
