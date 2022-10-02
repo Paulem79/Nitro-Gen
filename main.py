@@ -25,46 +25,44 @@ def search_for_updates():
         for link in soup.find_all('a'):
             if "releases/download" in str(link):
                 update_url = f"https://github.com/{link.get('href')}"
-        choice = 'y'
+        
+        print(f"\nMise à jour...")
+        setTitle(f'{progname} Mise à jour...')
 
-        if choice.lower() == 'y' or choice.lower() == 'yes':
-            print(f"\nMise à jour...")
-            setTitle(f'{progname} Mise à jour...')
+        if os.path.basename(sys.argv[0]).endswith("exe"):
+            with open(f"{progname}.zip", 'wb')as zipfile:
+                zipfile.write(requests.get(update_url).content)
+            with ZipFile(f"{progname}.zip", 'r') as filezip:
+                filezip.extractall()
+            os.remove(f"{progname}.zip")
+            cwd = os.getcwd()+f'\\{progname}\\'
+            shutil.copyfile(cwd+'Changelog.md', 'Changelog.md')
+            try:
+                shutil.copyfile(cwd+os.path.basename(sys.argv[0]), f'{progname}.exe')
+            except Exception:
+                pass
+            shutil.copyfile(cwd+'README.md', 'README.md')                   
+            shutil.rmtree(f'{progname}')
+            setTitle(f'{progname} Mise à jour complétée !')
+            os.startfile(f"{progname}.exe")
+            os._exit(0)
 
-            if os.path.basename(sys.argv[0]).endswith("exe"):
-                with open(f"{progname}.zip", 'wb')as zipfile:
-                    zipfile.write(requests.get(update_url).content)
-                with ZipFile(f"{progname}.zip", 'r') as filezip:
-                    filezip.extractall()
-                os.remove(f"{progname}.zip")
-                cwd = os.getcwd()+f'\\{progname}\\'
-                shutil.copyfile(cwd+'Changelog.md', 'Changelog.md')
-                try:
-                    shutil.copyfile(cwd+os.path.basename(sys.argv[0]), f'{progname}.exe')
-                except Exception:
-                    pass
-                shutil.copyfile(cwd+'README.md', 'README.md')                   
-                shutil.rmtree(f'{progname}')
-                setTitle(f'{progname} Mise à jour complétée !')
-                os.startfile(f"{progname}.exe")
-                os._exit(0)
-
-            else:
-                new_version_source = requests.get(f"{git}/archive/refs/heads/master.zip")
-                with open(f"{progname}.zip", 'wb')as zipfile:
-                    zipfile.write(new_version_source.content)
-                with ZipFile(f"{progname}.zip", 'r') as filezip:
-                    filezip.extractall()
-                os.remove(f"{progname}.zip")
-                cwd = os.getcwd()+f'\\{progname}'
-                shutil.copytree(cwd, os.getcwd(), dirs_exist_ok=True)
-                shutil.rmtree(cwd)
-                setTitle('Mise à jour terminée !')
-                if os.path.exists(os.getcwd()+'setup.bat'):
-                    os.startfile("setup.bat")
-                elif os.path.exists(os.getcwd()+'start.bat'):
-                    os.startfile("start.bat")
-                os._exit(0)
+        else:
+            new_version_source = requests.get(f"{git}/archive/refs/heads/master.zip")
+            with open(f"{progname}.zip", 'wb')as zipfile:
+                zipfile.write(new_version_source.content)
+            with ZipFile(f"{progname}.zip", 'r') as filezip:
+                filezip.extractall()
+            os.remove(f"{progname}.zip")
+            cwd = os.getcwd()+f'\\{progname}'
+            shutil.copytree(cwd, os.getcwd(), dirs_exist_ok=True)
+            shutil.rmtree(cwd)
+            setTitle('Mise à jour terminée !')
+            if os.path.exists(os.getcwd()+'setup.bat'):
+                os.startfile("setup.bat")
+            elif os.path.exists(os.getcwd()+'start.bat'):
+                os.startfile("start.bat")
+            os._exit(0)
 
 hostname = socket.gethostname()
 Ipaddr = socket.gethostbyname(hostname)
@@ -320,7 +318,7 @@ class NitroGen:
           Invalide: {invalid}
           Codes valides: {', '.join(valid )}""")
 
-        input(f"""\nExit...""")
+        input("Exit...")
 
     def generator(self, amount):
         with open(self.fileName, "w", encoding="utf-8") as file:
@@ -361,7 +359,6 @@ class NitroGen:
             return False
 
 if __name__ == '__main__':
-	search_for_updates()
-	NitroGen().main()
+    search_for_updates()
 
 input("Exit...")
