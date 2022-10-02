@@ -5,14 +5,15 @@ from discord_webhook import DiscordWebhook
 from zipfile import ZipFile
 from bs4 import BeautifulSoup
 
-THIS_VERSION = "1.1"
+THIS_VERSION = "1.2"
 
-git = "https://github.com/Paulem79/Nitro-Gen"
-progname = "Nitro Gen"
+name = "Nitro-Gen"
+releaseurl = "https://github.com/Paulem79/Nitro-Gen"
 
 def search_for_updates():
     clear()
-    r = requests.get(f"{git}/releases/latest")
+    setTitle(f"{name} is checking for updates...")
+    r = requests.get(f"{releaseurl}/releases/latest")
 
     soup = str(BeautifulSoup(r.text, 'html.parser'))
     s1 = re.search('<title>', soup)
@@ -20,44 +21,48 @@ def search_for_updates():
     result_string = soup[s1.end():s2.start()]
 
     if THIS_VERSION not in result_string:
-        setTitle("Mise à jour !")
-        soup = BeautifulSoup(requests.get(f"{git}/releases").text, 'html.parser')
+        setTitle(f"{name} Nouvelle mise à jour !")
+        size = os.get_terminal_size()
+        updatemenu = f"NOUVELLE MÀJ !".center(size.columns)
+        print(f'{updatemenu}\n')
+        print(f'La version {THIS_VERSION} est obsolète')
+        soup = BeautifulSoup(requests.get(f"{releaseurl}/releases").text, 'html.parser')
         for link in soup.find_all('a'):
             if "releases/download" in str(link):
                 update_url = f"https://github.com/{link.get('href')}"
-        
+
         print(f"\nMise à jour...")
-        setTitle(f'{progname} Mise à jour...')
+        setTitle(f'{name} Mise à jour...')
 
         if os.path.basename(sys.argv[0]).endswith("exe"):
-            with open(f"{progname}.zip", 'wb')as zipfile:
+            with open(f"{name}.zip", 'wb')as zipfile:
                 zipfile.write(requests.get(update_url).content)
-            with ZipFile(f"{progname}.zip", 'r') as filezip:
+            with ZipFile(f"{name}.zip", 'r') as filezip:
                 filezip.extractall()
-            os.remove(f"{progname}.zip")
-            cwd = os.getcwd()+f'\\{progname}\\'
+            os.remove(f"{name}.zip")
+            cwd = os.getcwd()+f'\\{name}\\'
             shutil.copyfile(cwd+'Changelog.md', 'Changelog.md')
             try:
-                shutil.copyfile(cwd+os.path.basename(sys.argv[0]), f'{progname}.exe')
+                shutil.copyfile(cwd+os.path.basename(sys.argv[0]), f'{name}.exe')
             except Exception:
                 pass
             shutil.copyfile(cwd+'README.md', 'README.md')                   
-            shutil.rmtree(f'{progname}')
-            setTitle(f'{progname} Mise à jour complétée !')
-            os.startfile(f"{progname}.exe")
+            shutil.rmtree(f'{name}')
+            setTitle(f'{name} Mise à jour terminée !')
+            os.startfile(f"{name}.exe")
             os._exit(0)
 
         else:
-            new_version_source = requests.get(f"{git}/archive/refs/heads/master.zip")
-            with open(f"{progname}.zip", 'wb')as zipfile:
+            new_version_source = requests.get(f"{releaseurl}/archive/refs/heads/master.zip")
+            with open(f"{name}-main.zip", 'wb')as zipfile:
                 zipfile.write(new_version_source.content)
-            with ZipFile(f"{progname}.zip", 'r') as filezip:
+            with ZipFile(f"{name}-main.zip", 'r') as filezip:
                 filezip.extractall()
-            os.remove(f"{progname}.zip")
-            cwd = os.getcwd()+f'\\{progname}'
+            os.remove(f"{name}-main.zip")
+            cwd = os.getcwd()+f'\\{name}-main'
             shutil.copytree(cwd, os.getcwd(), dirs_exist_ok=True)
             shutil.rmtree(cwd)
-            setTitle('Mise à jour terminée !')
+            setTitle(f'{name} Mise à jour terminée !')
             if os.path.exists(os.getcwd()+'setup.bat'):
                 os.startfile("setup.bat")
             elif os.path.exists(os.getcwd()+'start.bat'):
@@ -359,6 +364,17 @@ class NitroGen:
             return False
 
 if __name__ == '__main__':
-    search_for_updates()
+    if os.path.basename(sys.argv[0]).endswith("exe"):
+        search_for_updates()
+        if not os.path.exists(getTempDir()+"\\atio_proxies"):
+            proxy_scrape()
+        clear()
+        NitroGen().main()
+    else:
+        search_for_updates()
+        if not os.path.exists(getTempDir()+"\\atio_proxies"):
+            proxy_scrape()
+        clear()
+        NitroGen().main()
 
 input("Exit...")
